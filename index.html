@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
-
 <title>FranCavs Node</title>
 
 <style>
@@ -15,6 +13,15 @@ color:#00ff9c;
 font-family:monospace;
 margin:0;
 overflow:hidden;
+}
+
+/* MATRIX */
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
 }
 
 /* CRT */
@@ -35,7 +42,7 @@ rgba(0,255,150,0.05) 3px
 );
 }
 
-/* header */
+/* HEADER */
 
 header{
 text-align:center;
@@ -43,7 +50,7 @@ padding:20px;
 border-bottom:1px solid #00ff9c;
 }
 
-/* glitch title */
+/* GLITCH */
 
 .glitch{
 position:relative;
@@ -57,13 +64,13 @@ left:0;
 }
 
 .glitch::before{
-animation:glitch1 2s infinite;
 color:#0ff;
+animation:glitch1 2s infinite;
 }
 
 .glitch::after{
-animation:glitch2 2s infinite;
 color:#f0f;
+animation:glitch2 2s infinite;
 }
 
 @keyframes glitch1{
@@ -84,7 +91,7 @@ color:#f0f;
 100%{transform:translate(0)}
 }
 
-/* layout */
+/* LAYOUT */
 
 .container{
 display:flex;
@@ -110,6 +117,7 @@ overflow:auto;
 .box{
 border:1px solid #00ff9c;
 padding:10px;
+background:rgba(0,0,0,0.6);
 }
 
 h3{
@@ -117,18 +125,10 @@ margin-top:0;
 color:#6cf;
 }
 
-/* links */
-
 a{
 color:#00ff9c;
 text-decoration:none;
 }
-
-a:hover{
-text-decoration:underline;
-}
-
-/* terminal */
 
 #terminal-input{
 background:black;
@@ -139,8 +139,6 @@ outline:none;
 width:90%;
 }
 
-/* cursor */
-
 .cursor{
 animation:blink 1s infinite;
 }
@@ -149,6 +147,14 @@ animation:blink 1s infinite;
 0%{opacity:1}
 50%{opacity:0}
 100%{opacity:1}
+}
+
+button{
+background:black;
+border:1px solid #00ff9c;
+color:#00ff9c;
+cursor:pointer;
+padding:4px;
 }
 
 img{
@@ -161,11 +167,14 @@ max-width:80px;
 
 <body>
 
+<canvas id="matrix"></canvas>
+
 <header>
 
 <h1 class="glitch" data-text="FRANCAVS NODE">FRANCAVS NODE</h1>
-
 <p>conectado a the wired / neo venezia</p>
+
+<div id="contador"></div>
 
 </header>
 
@@ -188,9 +197,7 @@ max-width:80px;
 <div>
 
 <span>> </span>
-
 <input id="terminal-input" autofocus>
-
 <span class="cursor">█</span>
 
 </div>
@@ -203,11 +210,8 @@ max-width:80px;
 
 <h3>transmisión musical</h3>
 
-<div id="lastfm">
-
-conectando...
-
-</div>
+<div id="lastfm">conectando...</div>
+<div id="player"></div>
 
 </div>
 
@@ -215,11 +219,15 @@ conectando...
 
 <h3>actividad anime</h3>
 
-<div id="anilist">
-
-consultando la red...
+<div id="anilist">consultando...</div>
 
 </div>
+
+<div class="box">
+
+<h3>actividad en la red</h3>
+
+<div id="tweet">consultando...</div>
 
 </div>
 
@@ -227,7 +235,7 @@ consultando la red...
 
 <h3>links</h3>
 
-<a href="https://twitter.com/">twitter</a><br>
+<a href="https://x.com/francavs__">twitter</a><br>
 <a href="https://letterboxd.com/">letterboxd</a><br>
 <a href="https://anilist.co/user/FranCavs/">anilist</a><br>
 <a href="https://open.spotify.com/user/tpmais9eyg4hq6p5yawc0fcw8">spotify</a>
@@ -240,8 +248,7 @@ consultando la red...
 
 <a href="#">blue spring</a><br>
 <a href="#">iyashikei</a><br>
-<a href="#">aria ranking</a><br>
-<a href="#">tamayura</a>
+<a href="#">aria ranking</a>
 
 </div>
 
@@ -261,25 +268,27 @@ consultando la red...
 
 /* TERMINAL */
 
-const input = document.getElementById("terminal-input");
-const output = document.getElementById("terminal-output");
+const input=document.getElementById("terminal-input");
+const output=document.getElementById("terminal-output");
+const baseTerminal=output.innerHTML;
 
-/* mensaje inicial guardado */
-
-const baseTerminal = output.innerHTML;
+const audio=new Audio("https://cdn.jsdelivr.net/gh/robertmartin8/PyGameKeyboardSound/keyboard.wav");
 
 input.addEventListener("keypress",function(e){
 
+audio.currentTime=0;
+audio.play();
+
 if(e.key==="Enter"){
 
-const command = input.value;
+const command=input.value;
 
-output.innerHTML += `<p>> ${command}</p>`;
+output.innerHTML+=`<p>> ${command}</p>`;
 
 if(command==="ayuda"){
 
-output.innerHTML += `
-<p>comandos disponibles</p>
+output.innerHTML+=`
+<p>comandos</p>
 <p>sobre</p>
 <p>hilos</p>
 <p>limpiar</p>
@@ -289,7 +298,7 @@ output.innerHTML += `
 
 else if(command==="sobre"){
 
-output.innerHTML += `
+output.innerHTML+=`
 <p>FranCavs</p>
 <p>fan del slice of life</p>
 <p>iyashikei enjoyer</p>
@@ -299,24 +308,23 @@ output.innerHTML += `
 
 else if(command==="hilos"){
 
-output.innerHTML += `
-<p>archivo de hilos</p>
-<p><a href="#">blue spring</a></p>
-<p><a href="#">iyashikei</a></p>
-<p><a href="#">aria ranking</a></p>
+output.innerHTML+=`
+<p>blue spring</p>
+<p>iyashikei</p>
+<p>aria ranking</p>
 `;
 
 }
 
 else if(command==="limpiar"){
 
-output.innerHTML = baseTerminal;
+output.innerHTML=baseTerminal;
 
 }
 
 else{
 
-output.innerHTML += `<p>comando no reconocido</p>`;
+output.innerHTML+=`<p>comando no reconocido</p>`;
 
 }
 
@@ -328,59 +336,39 @@ input.value="";
 
 /* LASTFM */
 
-const username = "FranCavs12";
-const apiKey = "2c7d6975c099f7f3f9bee35d245a3ddb";
+const username="FranCavs12";
+const apiKey="2c7d6975c099f7f3f9bee35d245a3ddb";
 
 async function getLastTrack(){
 
-const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
+const url=`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
 
-try{
+const response=await fetch(url);
+const data=await response.json();
 
-const response = await fetch(url);
-const data = await response.json();
+const track=data.recenttracks.track[0];
 
-const track = data.recenttracks.track[0];
+const artist=track.artist["#text"];
+const name=track.name;
+const image=track.image[2]["#text"];
 
-const artist = track.artist["#text"];
-const name = track.name;
-const image = track.image[2]["#text"];
-
-const nowPlaying = track["@attr"]?.nowplaying;
-
-if(nowPlaying){
-
-document.getElementById("lastfm").innerHTML =
+document.getElementById("lastfm").innerHTML=
 `
 <img src="${image}">
 <br>
-reproduciendo ahora
-<br>
 ${artist} — ${name}
+<br><br>
+<button onclick="playSong('${artist} ${name}')">▶ escuchar</button>
 `;
 
 }
 
-else{
+function playSong(q){
 
-document.getElementById("lastfm").innerHTML =
-`
-<img src="${image}">
-<br>
-última escucha
-<br>
-${artist} — ${name}
-`;
+const url=`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}`;
 
-}
-
-}
-
-catch{
-
-document.getElementById("lastfm").innerText="no se pudo conectar";
-
-}
+document.getElementById("player").innerHTML=
+`<iframe width="100%" height="150" src="${url}" allowfullscreen></iframe>`;
 
 }
 
@@ -388,19 +376,15 @@ document.getElementById("lastfm").innerText="no se pudo conectar";
 
 async function getAnime(){
 
-const query = `
+const query=`
 query {
-MediaListCollection(userName: "FranCavs", type: ANIME, status: CURRENT) {
-lists {
-entries {
+MediaListCollection(userName:"FranCavs",type:ANIME,status:CURRENT){
+lists{
+entries{
 progress
-media {
-title {
-romaji
-}
-coverImage {
-medium
-}
+media{
+title{romaji}
+coverImage{medium}
 }
 }
 }
@@ -408,68 +392,132 @@ medium
 }
 `;
 
-const url = "https://graphql.anilist.co";
-
-const options = {
+const response=await fetch("https://graphql.anilist.co",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({query})
-};
+});
 
-try{
+const data=await response.json();
+const entry=data.data.MediaListCollection.lists[0].entries[0];
 
-const response = await fetch(url,options);
-const data = await response.json();
-
-const entry = data.data.MediaListCollection.lists[0].entries[0];
-
-const title = entry.media.title.romaji;
-const progress = entry.progress;
-const cover = entry.media.coverImage.medium;
-
-document.getElementById("anilist").innerHTML =
+document.getElementById("anilist").innerHTML=
 `
-<img src="${cover}">
+<img src="${entry.media.coverImage.medium}">
 <br>
-viendo ahora
+${entry.media.title.romaji}
 <br>
-${title}
-<br>
-episodio ${progress}
+episodio ${entry.progress}
 `;
 
 }
 
-catch{
+/* TWEET */
 
-document.getElementById("anilist").innerText="no se pudo conectar";
+async function getTweet(){
+
+const rss="https://api.rss2json.com/v1/api.json?rss_url=https://twitrss.me/twitter_user_to_rss/?user=francavs__";
+
+const response=await fetch(rss);
+const data=await response.json();
+
+let tweet=null;
+
+for(let item of data.items){
+
+if(!item.title.startsWith("@")){
+tweet=item;
+break;
+}
+
+}
+
+if(tweet){
+
+document.getElementById("tweet").innerHTML=
+`
+<p>${tweet.title}</p>
+<a href="${tweet.link}" target="_blank">ver tweet</a>
+`;
 
 }
 
 }
 
-/* MENSAJES ARIA */
+/* CONTADOR */
 
-const mensajes = [
+async function contador(){
 
+const url="https://api.countapi.xyz/hit/francavs-node/visitas";
+
+const response=await fetch(url);
+const data=await response.json();
+
+document.getElementById("contador").innerText=
+`usuarios conectados a la red: ${data.value}`;
+
+}
+
+/* MENSAJES */
+
+const mensajes=[
 "disfrutá el momento",
 "los días tranquilos también dejan huella",
 "neo venezia respira calma",
 "cada día tiene su pequeño milagro",
 "la red siempre está conectada"
-
 ];
 
-document.getElementById("mensaje").innerText =
+document.getElementById("mensaje").innerText=
 mensajes[Math.floor(Math.random()*mensajes.length)];
+
+/* MATRIX */
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
+
+const letters="01";
+const fontSize=14;
+const columns=canvas.width/fontSize;
+
+const drops=[];
+
+for(let x=0;x<columns;x++)drops[x]=1;
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#0f0";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+const text=letters[Math.floor(Math.random()*letters.length)];
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0;
+
+drops[i]++;
+
+}
+
+}
+
+setInterval(draw,33);
 
 getLastTrack();
 getAnime();
+getTweet();
+contador();
 
 </script>
 
 </body>
-
 </html>
