@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>FranCavs Node</title>
+<title>FranCavs</title>
 
 <style>
 
@@ -51,59 +51,6 @@ header{
 text-align:center;
 padding:20px;
 border-bottom:1px solid #00ff9c;
-
-}
-
-/* GLITCH */
-
-.glitch{
-
-position:relative;
-
-}
-
-.glitch::before,
-.glitch::after{
-
-content:attr(data-text);
-position:absolute;
-left:0;
-
-}
-
-.glitch::before{
-
-color:#0ff;
-animation:glitch1 2s infinite;
-
-}
-
-.glitch::after{
-
-color:#f0f;
-animation:glitch2 2s infinite;
-
-}
-
-@keyframes glitch1{
-
-0%{transform:translate(0)}
-20%{transform:translate(-2px,2px)}
-40%{transform:translate(-2px,-2px)}
-60%{transform:translate(2px,2px)}
-80%{transform:translate(2px,-2px)}
-100%{transform:translate(0)}
-
-}
-
-@keyframes glitch2{
-
-0%{transform:translate(0)}
-20%{transform:translate(2px,-2px)}
-40%{transform:translate(2px,2px)}
-60%{transform:translate(-2px,-2px)}
-80%{transform:translate(-2px,2px)}
-100%{transform:translate(0)}
 
 }
 
@@ -183,19 +130,29 @@ animation:blink 1s infinite;
 
 }
 
-button{
-
-background:black;
-border:1px solid #00ff9c;
-color:#00ff9c;
-cursor:pointer;
-padding:4px;
-
-}
-
 img{
 
 max-width:80px;
+
+}
+
+/* BOOT SCREEN */
+
+#boot{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+color:#00ff9c;
+display:flex;
+align-items:center;
+justify-content:center;
+font-family:monospace;
+font-size:18px;
+z-index:9999;
 
 }
 
@@ -205,9 +162,22 @@ max-width:80px;
 
 <body>
 
+<div id="boot">
+<pre>
+
+booting system...
+
+estableciendo conexión...
+nodo detectado: FranCavs
+
+conectando a the wired...
+
+</pre>
+</div>
+
 <header>
 
-<h1 class="glitch" data-text="FRANCAVS NODE">FRANCAVS NODE</h1>
+<h1>FranCavs</h1>
 <p>conectado a the wired / neo venezia</p>
 
 <div id="contador"></div>
@@ -260,14 +230,6 @@ max-width:80px;
 
 <div class="box">
 
-<h3>actividad en la red</h3>
-
-<div id="tweet">consultando...</div>
-
-</div>
-
-<div class="box">
-
 <h3>links</h3>
 
 <a href="https://x.com/francavs__">twitter</a><br>
@@ -300,6 +262,12 @@ max-width:80px;
 
 <script>
 
+/* BOOT */
+
+setTimeout(()=>{
+document.getElementById("boot").style.display="none";
+},1500);
+
 /* TERMINAL */
 
 const input=document.getElementById("terminal-input");
@@ -312,14 +280,17 @@ if(e.key==="Enter"){
 
 const command=input.value;
 
-output.innerHTML+=`<p>> ${command}</p>`;
+output.innerHTML+=`<br><p>> ${command}</p><br>`;
 
 if(command==="ayuda"){
 
 output.innerHTML+=`
 <p>comandos</p>
 <p>sobre</p>
-<p>hilos</p>
+<p>mate</p>
+<p>siesta</p>
+<p>lain</p>
+<p>gato</p>
 <p>limpiar</p>
 `;
 
@@ -335,12 +306,37 @@ output.innerHTML+=`
 
 }
 
-else if(command==="hilos"){
+else if(command==="mate"){
 
 output.innerHTML+=`
-<p>blue spring</p>
-<p>iyashikei</p>
-<p>aria ranking</p>
+<p>cebando mate...</p>
+<p>listo</p>
+`;
+
+}
+
+else if(command==="siesta"){
+
+output.innerHTML+=`
+<p>modo descanso activado</p>
+<p>zzz</p>
+`;
+
+}
+
+else if(command==="lain"){
+
+output.innerHTML+=`
+<p>present day</p>
+<p>present time</p>
+`;
+
+}
+
+else if(command==="gato"){
+
+output.innerHTML+=`
+<p>=^.^=</p>
 `;
 
 }
@@ -386,17 +382,7 @@ document.getElementById("lastfm").innerHTML=
 <img src="${image}">
 <br>
 ${artist} — ${name}
-<br><br>
-<button onclick="playSong('${artist} ${name}')">▶ escuchar</button>
 `;
-
-}
-
-function playSong(q){
-
-const url=`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
-
-window.open(url,"_blank");
 
 }
 
@@ -440,54 +426,6 @@ episodio ${entry.progress}
 
 }
 
-/* TWEET */
-
-async function getTweet(){
-
-try{
-
-const rss="https://api.rss2json.com/v1/api.json?rss_url=https://nitter.net/francavs__/rss";
-
-const response=await fetch(rss);
-const data=await response.json();
-
-let tweet=null;
-
-for(let item of data.items){
-
-if(!item.title.startsWith("@")){
-tweet=item;
-break;
-}
-
-}
-
-if(tweet){
-
-document.getElementById("tweet").innerHTML=
-`
-<p>${tweet.title}</p>
-<a href="${tweet.link}" target="_blank">ver tweet</a>
-`;
-
-}
-
-else{
-
-document.getElementById("tweet").innerText="sin tweets recientes";
-
-}
-
-}
-
-catch{
-
-document.getElementById("tweet").innerText="no se pudo conectar";
-
-}
-
-}
-
 /* CONTADOR */
 
 async function contador(){
@@ -519,7 +457,6 @@ mensajes[Math.floor(Math.random()*mensajes.length)];
 
 getLastTrack();
 getAnime();
-getTweet();
 contador();
 
 </script>
