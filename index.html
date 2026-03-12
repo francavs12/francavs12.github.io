@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fran Cavs — connected to the wired</title>
+
+<style>
+body {
+    background-color: #050505;
+    color: #8cff8c;
+    font-family: "Courier New", monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    border: 1px solid #1f1f1f;
+    padding: 30px;
+    width: 420px;
+    background: #0a0a0a;
+}
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.section {
+    margin-top: 18px;
+}
+
+a {
+    color: #8cff8c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>FRAN CAVS</h1>
+<div class="subtitle">connected to the wired<span class="blink">_</span></div>
+
+<div class="section">
+> about<br>
+slice of life enjoyer<br>
+iyashikei enthusiast<br>
+tails defender
+</div>
+
+<div class="section">
+> currently watching<br>
+<span id="anime">loading signal...</span>
+</div>
+
+<div class="section">
+> currently listening<br>
+<span id="music">unknown transmission</span>
+</div>
+
+<div class="section">
+> favorite works<br>
+Aria<br>
+Sangatsu no Lion<br>
+Natsume Yuujinchou<br>
+Yokohama Kaidashi Kikou
+</div>
+
+<div class="section">
+> links<br>
+<a href="#">twitter</a><br>
+<a href="#">letterboxd</a><br>
+<a href="#">anilist</a>
+</div>
+
+</div>
+
+<script>
+// ejemplo fake de anilist
+document.getElementById("anime").innerText =
+"Non Non Biyori — episode 7";
+
+// ejemplo fake de spotify
+document.getElementById("music").innerText =
+"David Bowie — Starman";
+</script>
+
+</body>
+</html>
