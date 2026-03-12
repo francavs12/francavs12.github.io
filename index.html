@@ -21,8 +21,6 @@ transition:opacity 2s;
 z-index:9999;
 }
 
-<div id="siesta-overlay"></div>
-
 body{
 
 background:
@@ -177,6 +175,8 @@ z-index:9999;
 
 <body>
 
+<div id="siesta-overlay"></div>
+
 <div id="boot">
 <pre>
 
@@ -327,15 +327,6 @@ else if(command==="mate"){
 output.innerHTML+=`
 <p>cebando mate...</p>
 <p>listo</p>
-`;
-
-}
-
-else if(command==="siesta"){
-
-output.innerHTML+=`
-<p>modo descanso activado</p>
-<p>zzz</p>
 `;
 
 }
@@ -504,4 +495,3 @@ contador();
 
 </body>
 </html>
-
