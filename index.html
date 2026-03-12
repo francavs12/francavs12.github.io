@@ -8,6 +8,21 @@
 
 <style>
 
+#siesta-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+pointer-events:none;
+transition:opacity 2s;
+z-index:9999;
+}
+
+<div id="siesta-overlay"></div>
+
 body{
 
 background:
@@ -288,6 +303,7 @@ output.innerHTML+=`
 <p>comandos</p>
 <p>sobre</p>
 <p>mate</p>
+<p>awawawa</p>
 <p>siesta</p>
 <p>lain</p>
 <p>gato</p>
@@ -338,6 +354,31 @@ else if(command==="gato"){
 output.innerHTML+=`
 <p>=^.^=</p>
 `;
+
+}
+
+else if(command==="awawawa"){
+
+const audio = new Audio("https://files.catbox.moe/o501zw.mp3");
+audio.volume = 0.9;
+audio.play();
+
+output.innerHTML+=`
+<p>akari: awawawa~</p>
+`;
+
+}
+
+else if(command==="siesta"){
+
+output.innerHTML+=`<p>tomando una siesta...</p>`;
+
+const overlay=document.getElementById("siesta-overlay");
+overlay.style.opacity="0.85";
+
+setTimeout(()=>{
+overlay.style.opacity="0";
+},5000);
 
 }
 
@@ -463,3 +504,4 @@ contador();
 
 </body>
 </html>
+
