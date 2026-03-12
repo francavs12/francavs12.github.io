@@ -169,6 +169,23 @@ z-index:9999;
 
 }
 
+@keyframes glitch {
+
+0%{transform:translate(0)}
+20%{transform:translate(-2px,1px)}
+40%{transform:translate(2px,-1px)}
+60%{transform:translate(-1px,2px)}
+80%{transform:translate(1px,-2px)}
+100%{transform:translate(0)}
+
+}
+
+.glitch{
+
+animation:glitch 0.12s;
+
+}
+  
 </style>
 
 </head>
@@ -393,10 +410,30 @@ output.scrollTop = output.scrollHeight;
 
 });
 
+function wiredGlitch(){
+
+const body=document.body;
+
+body.classList.add("glitch");
+
+setTimeout(()=>{
+body.classList.remove("glitch");
+},120);
+
+}
+
+setInterval(()=>{
+
+if(Math.random()<0.15){
+wiredGlitch();
+}
+
+},4000);
+  
 /* LASTFM */
 
 const username="FranCavs12";
-const apiKey="2c7d6975c099f7f3f9bee35d245a3ddb";
+const apiKey="2c7d6975c099f7f3f9bee35d245a3ddb";  
 
 async function getLastTrack(){
 
@@ -497,4 +534,5 @@ contador();
 
 </body>
 </html>
+
 
