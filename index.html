@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <title>FranCavs Node</title>
 
 <style>
 
 body{
-background:#000;
+background:black;
 color:#00ff9c;
-font-family: monospace;
+font-family:monospace;
 margin:0;
 overflow:hidden;
 }
 
-/* CRT scanlines */
+/* CRT */
 
 body::after{
 content:"";
@@ -32,11 +35,56 @@ rgba(0,255,150,0.05) 3px
 );
 }
 
+/* header */
+
 header{
 text-align:center;
 padding:20px;
 border-bottom:1px solid #00ff9c;
 }
+
+/* glitch title */
+
+.glitch{
+position:relative;
+}
+
+.glitch::before,
+.glitch::after{
+content:attr(data-text);
+position:absolute;
+left:0;
+}
+
+.glitch::before{
+animation:glitch1 2s infinite;
+color:#0ff;
+}
+
+.glitch::after{
+animation:glitch2 2s infinite;
+color:#f0f;
+}
+
+@keyframes glitch1{
+0%{transform:translate(0)}
+20%{transform:translate(-2px,2px)}
+40%{transform:translate(-2px,-2px)}
+60%{transform:translate(2px,2px)}
+80%{transform:translate(2px,-2px)}
+100%{transform:translate(0)}
+}
+
+@keyframes glitch2{
+0%{transform:translate(0)}
+20%{transform:translate(2px,-2px)}
+40%{transform:translate(2px,2px)}
+60%{transform:translate(-2px,-2px)}
+80%{transform:translate(-2px,2px)}
+100%{transform:translate(0)}
+}
+
+/* layout */
 
 .container{
 display:flex;
@@ -69,6 +117,8 @@ margin-top:0;
 color:#6cf;
 }
 
+/* links */
+
 a{
 color:#00ff9c;
 text-decoration:none;
@@ -78,12 +128,31 @@ a:hover{
 text-decoration:underline;
 }
 
+/* terminal */
+
 #terminal-input{
 background:black;
 border:none;
 color:#00ff9c;
 font-family:monospace;
 outline:none;
+width:90%;
+}
+
+/* cursor */
+
+.cursor{
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}
+
+img{
+max-width:80px;
 }
 
 </style>
@@ -94,7 +163,8 @@ outline:none;
 
 <header>
 
-<h1>FRAN CAVS NODE</h1>
+<h1 class="glitch" data-text="FRANCAVS NODE">FRANCAVS NODE</h1>
+
 <p>conectado a the wired / neo venezia</p>
 
 </header>
@@ -106,7 +176,7 @@ outline:none;
 <div id="terminal-output">
 
 <p>estableciendo conexión...</p>
-<p>nodo: fran cavs</p>
+<p>nodo: FranCavs</p>
 <p>estado: tranquilo</p>
 
 <br>
@@ -118,7 +188,10 @@ outline:none;
 <div>
 
 <span>> </span>
+
 <input id="terminal-input" autofocus>
+
+<span class="cursor">█</span>
 
 </div>
 
@@ -191,6 +264,10 @@ consultando la red...
 const input = document.getElementById("terminal-input");
 const output = document.getElementById("terminal-output");
 
+/* mensaje inicial guardado */
+
+const baseTerminal = output.innerHTML;
+
 input.addEventListener("keypress",function(e){
 
 if(e.key==="Enter"){
@@ -213,7 +290,7 @@ output.innerHTML += `
 else if(command==="sobre"){
 
 output.innerHTML += `
-<p>fran cavs</p>
+<p>FranCavs</p>
 <p>fan del slice of life</p>
 <p>iyashikei enjoyer</p>
 `;
@@ -233,7 +310,7 @@ output.innerHTML += `
 
 else if(command==="limpiar"){
 
-output.innerHTML="";
+output.innerHTML = baseTerminal;
 
 }
 
@@ -267,7 +344,6 @@ const track = data.recenttracks.track[0];
 
 const artist = track.artist["#text"];
 const name = track.name;
-
 const image = track.image[2]["#text"];
 
 const nowPlaying = track["@attr"]?.nowplaying;
@@ -276,8 +352,10 @@ if(nowPlaying){
 
 document.getElementById("lastfm").innerHTML =
 `
-<img src="${image}"><br>
-reproduciendo ahora<br>
+<img src="${image}">
+<br>
+reproduciendo ahora
+<br>
 ${artist} — ${name}
 `;
 
@@ -287,8 +365,10 @@ else{
 
 document.getElementById("lastfm").innerHTML =
 `
-<img src="${image}"><br>
-última escucha<br>
+<img src="${image}">
+<br>
+última escucha
+<br>
 ${artist} — ${name}
 `;
 
@@ -351,9 +431,12 @@ const cover = entry.media.coverImage.medium;
 
 document.getElementById("anilist").innerHTML =
 `
-<img src="${cover}" width="80"><br>
-viendo ahora<br>
-${title}<br>
+<img src="${cover}">
+<br>
+viendo ahora
+<br>
+${title}
+<br>
 episodio ${progress}
 `;
 
@@ -367,15 +450,15 @@ document.getElementById("anilist").innerText="no se pudo conectar";
 
 }
 
-/* MENSAJES RANDOM */
+/* MENSAJES ARIA */
 
 const mensajes = [
 
 "disfrutá el momento",
-"el día tranquilo también deja huella",
-"la red siempre está conectada",
+"los días tranquilos también dejan huella",
 "neo venezia respira calma",
-"cada día tiene su pequeño milagro"
+"cada día tiene su pequeño milagro",
+"la red siempre está conectada"
 
 ];
 
@@ -388,5 +471,5 @@ getAnime();
 </script>
 
 </body>
-</html>
 
+</html>
