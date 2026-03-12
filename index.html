@@ -11,24 +11,43 @@ background:#000;
 color:#00ff9c;
 font-family: monospace;
 margin:0;
-padding:0;
+overflow:hidden;
+}
+
+/* CRT scanlines */
+
+body::after{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+background: repeating-linear-gradient(
+0deg,
+rgba(0,0,0,0) 0px,
+rgba(0,0,0,0) 2px,
+rgba(0,255,150,0.05) 3px
+);
 }
 
 header{
 text-align:center;
-padding:30px;
+padding:20px;
 border-bottom:1px solid #00ff9c;
 }
 
 .container{
 display:flex;
-height:80vh;
+height:85vh;
 }
 
 .terminal{
 width:65%;
 padding:20px;
 border-right:1px solid #00ff9c;
+overflow:auto;
 }
 
 .panel{
@@ -36,12 +55,13 @@ width:35%;
 padding:20px;
 display:flex;
 flex-direction:column;
-gap:30px;
+gap:20px;
+overflow:auto;
 }
 
 .box{
 border:1px solid #00ff9c;
-padding:15px;
+padding:10px;
 }
 
 h3{
@@ -58,29 +78,32 @@ a:hover{
 text-decoration:underline;
 }
 
-.cursor{
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-0%{opacity:1}
-50%{opacity:0}
-100%{opacity:1}
+#terminal-input{
+background:black;
+border:none;
+color:#00ff9c;
+font-family:monospace;
+outline:none;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>FRAN CAVS NODE</h1>
-<p>neo venezia / the wired</p>
+<p>conectado a the wired / neo venezia</p>
+
 </header>
 
 <div class="container">
 
 <div class="terminal">
+
+<div id="terminal-output">
 
 <p>estableciendo conexión...</p>
 <p>nodo: fran cavs</p>
@@ -88,45 +111,73 @@ animation:blink 1s infinite;
 
 <br>
 
-<p>> ayuda</p>
-<p>sobre</p>
-<p>hilos</p>
-<p>limpiar</p>
+<p>escribí "ayuda"</p>
 
-<br>
+</div>
 
-<span class="cursor">█</span>
+<div>
+
+<span>> </span>
+<input id="terminal-input" autofocus>
+
+</div>
 
 </div>
 
 <div class="panel">
 
 <div class="box">
+
 <h3>transmisión musical</h3>
+
 <div id="lastfm">
-conectando a la red musical...
+
+conectando...
+
 </div>
+
 </div>
 
 <div class="box">
+
 <h3>actividad anime</h3>
+
 <div id="anilist">
+
 consultando la red...
+
 </div>
+
 </div>
 
 <div class="box">
+
 <h3>links</h3>
+
 <a href="https://twitter.com/">twitter</a><br>
 <a href="https://letterboxd.com/">letterboxd</a><br>
-<a href="https://anilist.co/user/FranCavs/">anilist</a>
+<a href="https://anilist.co/user/FranCavs/">anilist</a><br>
+<a href="https://open.spotify.com/user/tpmais9eyg4hq6p5yawc0fcw8">spotify</a>
+
 </div>
 
 <div class="box">
+
 <h3>archivo de hilos</h3>
+
 <a href="#">blue spring</a><br>
 <a href="#">iyashikei</a><br>
-<a href="#">aria ranking</a>
+<a href="#">aria ranking</a><br>
+<a href="#">tamayura</a>
+
+</div>
+
+<div class="box">
+
+<h3>registro del sistema</h3>
+
+<div id="mensaje"></div>
+
 </div>
 
 </div>
@@ -135,12 +186,75 @@ consultando la red...
 
 <script>
 
+/* TERMINAL */
+
+const input = document.getElementById("terminal-input");
+const output = document.getElementById("terminal-output");
+
+input.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+const command = input.value;
+
+output.innerHTML += `<p>> ${command}</p>`;
+
+if(command==="ayuda"){
+
+output.innerHTML += `
+<p>comandos disponibles</p>
+<p>sobre</p>
+<p>hilos</p>
+<p>limpiar</p>
+`;
+
+}
+
+else if(command==="sobre"){
+
+output.innerHTML += `
+<p>fran cavs</p>
+<p>fan del slice of life</p>
+<p>iyashikei enjoyer</p>
+`;
+
+}
+
+else if(command==="hilos"){
+
+output.innerHTML += `
+<p>archivo de hilos</p>
+<p><a href="#">blue spring</a></p>
+<p><a href="#">iyashikei</a></p>
+<p><a href="#">aria ranking</a></p>
+`;
+
+}
+
+else if(command==="limpiar"){
+
+output.innerHTML="";
+
+}
+
+else{
+
+output.innerHTML += `<p>comando no reconocido</p>`;
+
+}
+
+input.value="";
+
+}
+
+});
+
 /* LASTFM */
 
 const username = "FranCavs12";
 const apiKey = "2c7d6975c099f7f3f9bee35d245a3ddb";
 
-async function getLastTrack() {
+async function getLastTrack(){
 
 const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
 
@@ -154,21 +268,37 @@ const track = data.recenttracks.track[0];
 const artist = track.artist["#text"];
 const name = track.name;
 
+const image = track.image[2]["#text"];
+
 const nowPlaying = track["@attr"]?.nowplaying;
 
 if(nowPlaying){
+
 document.getElementById("lastfm").innerHTML =
-`reproduciendo ahora<br>${artist} — ${name}`;
+`
+<img src="${image}"><br>
+reproduciendo ahora<br>
+${artist} — ${name}
+`;
+
 }
+
 else{
+
 document.getElementById("lastfm").innerHTML =
-`última escucha<br>${artist} — ${name}`;
+`
+<img src="${image}"><br>
+última escucha<br>
+${artist} — ${name}
+`;
+
 }
 
-}catch{
+}
 
-document.getElementById("lastfm").innerText =
-"no se pudo conectar";
+catch{
+
+document.getElementById("lastfm").innerText="no se pudo conectar";
 
 }
 
@@ -188,6 +318,9 @@ media {
 title {
 romaji
 }
+coverImage {
+medium
+}
 }
 }
 }
@@ -198,11 +331,11 @@ romaji
 const url = "https://graphql.anilist.co";
 
 const options = {
-method: "POST",
+method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body: JSON.stringify({query})
+body:JSON.stringify({query})
 };
 
 try{
@@ -214,18 +347,40 @@ const entry = data.data.MediaListCollection.lists[0].entries[0];
 
 const title = entry.media.title.romaji;
 const progress = entry.progress;
+const cover = entry.media.coverImage.medium;
 
 document.getElementById("anilist").innerHTML =
-`viendo ahora<br>${title}<br>episodio ${progress}`;
+`
+<img src="${cover}" width="80"><br>
+viendo ahora<br>
+${title}<br>
+episodio ${progress}
+`;
 
-}catch{
+}
 
-document.getElementById("anilist").innerText =
-"no se pudo conectar";
+catch{
+
+document.getElementById("anilist").innerText="no se pudo conectar";
 
 }
 
 }
+
+/* MENSAJES RANDOM */
+
+const mensajes = [
+
+"disfrutá el momento",
+"el día tranquilo también deja huella",
+"la red siempre está conectada",
+"neo venezia respira calma",
+"cada día tiene su pequeño milagro"
+
+];
+
+document.getElementById("mensaje").innerText =
+mensajes[Math.floor(Math.random()*mensajes.length)];
 
 getLastTrack();
 getAnime();
