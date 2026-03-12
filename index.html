@@ -1,99 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>FranCavs — wired node</title>
+<title>Fran Cavs Node</title>
 
 <style>
 
 body{
-background:#050505;
-color:#8cff8c;
-font-family: "Courier New", monospace;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-overflow:hidden;
+background:#000;
+color:#00ff9c;
+font-family: monospace;
+margin:0;
+padding:0;
 }
 
-/* CRT scanlines */
-
-body::before{
-content:"";
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:repeating-linear-gradient(
-0deg,
-rgba(0,0,0,0.4),
-rgba(0,0,0,0.4) 2px,
-transparent 2px,
-transparent 4px
-);
-pointer-events:none;
-}
-
-/* main card */
-
-.card{
-border:1px solid #222;
+header{
+text-align:center;
 padding:30px;
-width:420px;
-background:#0a0a0a;
-box-shadow:0 0 15px #003300;
+border-bottom:1px solid #00ff9c;
 }
 
-/* glitch title */
-
-.glitch{
-font-size:22px;
-position:relative;
+.container{
+display:flex;
+height:80vh;
 }
 
-.glitch::before,
-.glitch::after{
-content:attr(data-text);
-position:absolute;
-left:0;
+.terminal{
+width:65%;
+padding:20px;
+border-right:1px solid #00ff9c;
 }
 
-.glitch::before{
-color:#ff00c8;
-animation:glitch1 2s infinite;
+.panel{
+width:35%;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:30px;
 }
 
-.glitch::after{
-color:#00fff9;
-animation:glitch2 2s infinite;
+.box{
+border:1px solid #00ff9c;
+padding:15px;
 }
 
-@keyframes glitch1{
-0%{left:0}
-20%{left:2px}
-40%{left:-2px}
-60%{left:1px}
-80%{left:-1px}
-100%{left:0}
-}
-
-@keyframes glitch2{
-0%{left:0}
-20%{left:-2px}
-40%{left:2px}
-60%{left:-1px}
-80%{left:1px}
-100%{left:0}
-}
-
-.section{
-margin-top:18px;
+h3{
+margin-top:0;
+color:#6cf;
 }
 
 a{
-color:#8cff8c;
+color:#00ff9c;
 text-decoration:none;
 }
 
@@ -101,18 +58,14 @@ a:hover{
 text-decoration:underline;
 }
 
-.clock{
-color:#666;
-font-size:12px;
-margin-top:5px;
-}
-
 .cursor{
 animation:blink 1s infinite;
 }
 
 @keyframes blink{
+0%{opacity:1}
 50%{opacity:0}
+100%{opacity:1}
 }
 
 </style>
@@ -120,63 +73,164 @@ animation:blink 1s infinite;
 
 <body>
 
-<div class="card">
+<header>
+<h1>FRAN CAVS NODE</h1>
+<p>neo venezia / the wired</p>
+</header>
 
-<div class="glitch" data-text="FRAN CAVS">
-FRAN CAVS
+<div class="container">
+
+<div class="terminal">
+
+<p>estableciendo conexión...</p>
+<p>nodo: fran cavs</p>
+<p>estado: tranquilo</p>
+
+<br>
+
+<p>> ayuda</p>
+<p>sobre</p>
+<p>hilos</p>
+<p>limpiar</p>
+
+<br>
+
+<span class="cursor">█</span>
+
 </div>
 
-<div class="clock">
-node time: <span id="clock"></span>
+<div class="panel">
+
+<div class="box">
+<h3>transmisión musical</h3>
+<div id="lastfm">
+conectando a la red musical...
+</div>
 </div>
 
-<div class="section">
-> status<span class="cursor">_</span><br>
-connected to the wired<br>
-iyashikei enjoyer<br>
-tails enthusiast
+<div class="box">
+<h3>actividad anime</h3>
+<div id="anilist">
+consultando la red...
+</div>
 </div>
 
-<div class="section">
-> currently watching<br>
-Lucky Star
+<div class="box">
+<h3>links</h3>
+<a href="https://twitter.com/">twitter</a><br>
+<a href="https://letterboxd.com/">letterboxd</a><br>
+<a href="https://anilist.co/user/FranCavs/">anilist</a>
 </div>
 
-<div class="section">
-> currently listening<br>
-David Bowie — Starman
+<div class="box">
+<h3>archivo de hilos</h3>
+<a href="#">blue spring</a><br>
+<a href="#">iyashikei</a><br>
+<a href="#">aria ranking</a>
 </div>
 
-<div class="section">
-> favorite works<br>
-Aria<br>
-Sangatsu no Lion<br>
-Natsume Yuujinchou<br>
-Yokohama Kaidashi Kikou
-</div>
-
-<div class="section">
-> links<br>
-<a href="#">twitter</a><br>
-<a href="#">letterboxd</a><br>
-<a href="#">anilist</a>
 </div>
 
 </div>
 
 <script>
 
-function updateClock(){
-let now = new Date();
-let time = now.toLocaleTimeString();
-document.getElementById("clock").innerText = time;
+/* LASTFM */
+
+const username = "FranCavs12";
+const apiKey = "2c7d6975c099f7f3f9bee35d245a3ddb";
+
+async function getLastTrack() {
+
+const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
+
+try{
+
+const response = await fetch(url);
+const data = await response.json();
+
+const track = data.recenttracks.track[0];
+
+const artist = track.artist["#text"];
+const name = track.name;
+
+const nowPlaying = track["@attr"]?.nowplaying;
+
+if(nowPlaying){
+document.getElementById("lastfm").innerHTML =
+`reproduciendo ahora<br>${artist} — ${name}`;
+}
+else{
+document.getElementById("lastfm").innerHTML =
+`última escucha<br>${artist} — ${name}`;
 }
 
-setInterval(updateClock,1000);
-updateClock();
+}catch{
+
+document.getElementById("lastfm").innerText =
+"no se pudo conectar";
+
+}
+
+}
+
+/* ANILIST */
+
+async function getAnime(){
+
+const query = `
+query {
+MediaListCollection(userName: "FranCavs", type: ANIME, status: CURRENT) {
+lists {
+entries {
+progress
+media {
+title {
+romaji
+}
+}
+}
+}
+}
+}
+`;
+
+const url = "https://graphql.anilist.co";
+
+const options = {
+method: "POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({query})
+};
+
+try{
+
+const response = await fetch(url,options);
+const data = await response.json();
+
+const entry = data.data.MediaListCollection.lists[0].entries[0];
+
+const title = entry.media.title.romaji;
+const progress = entry.progress;
+
+document.getElementById("anilist").innerHTML =
+`viendo ahora<br>${title}<br>episodio ${progress}`;
+
+}catch{
+
+document.getElementById("anilist").innerText =
+"no se pudo conectar";
+
+}
+
+}
+
+getLastTrack();
+getAnime();
 
 </script>
 
 </body>
 </html>
-
