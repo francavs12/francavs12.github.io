@@ -2,590 +2,356 @@
 <html lang="es">
 
 <head>
-
 <meta charset="UTF-8">
 <title>FranCavs</title>
-
 <style>
-
 #siesta-overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-opacity:0;
-pointer-events:none;
-transition:opacity 2s;
-z-index:9999;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 2s;
+  z-index:9999;
 }
 
 body{
-
-background:
-linear-gradient(rgba(0,0,0,0.9),rgba(0,0,0,0.9)),
-url("https://images.unsplash.com/photo-1523906834658-6e24ef2386f9");
-
-background-size:cover;
-background-attachment:fixed;
-
-color:#00ff9c;
-font-family:monospace;
-margin:0;
-
+  background: linear-gradient(rgba(0,0,0,0.9),rgba(0,0,0,0.9)),
+              url("https://images.unsplash.com/photo-1523906834658-6e24ef2386f9");
+  background-size:cover;
+  background-attachment:fixed;
+  color:#00ff9c;
+  font-family:monospace;
+  margin:0;
 }
-
-/* CRT */
 
 body::after{
-
-content:"";
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-
-background: repeating-linear-gradient(
-0deg,
-rgba(0,0,0,0) 0px,
-rgba(0,0,0,0) 2px,
-rgba(0,255,150,0.05) 3px
-);
-
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,255,150,0.05) 3px
+  );
 }
-
-/* HEADER */
 
 header{
-
-text-align:center;
-padding:20px;
-border-bottom:1px solid #00ff9c;
-
+  text-align:center;
+  padding:20px;
+  border-bottom:1px solid #00ff9c;
 }
 
-/* LAYOUT */
-
 .container{
-
-display:flex;
-height:85vh;
-
+  display:flex;
+  height:85vh;
 }
 
 .terminal{
-
-width:65%;
-padding:20px;
-border-right:1px solid #00ff9c;
-overflow:auto;
-
+  width:65%;
+  padding:20px;
+  border-right:1px solid #00ff9c;
+  overflow:auto;
 }
 
 .panel{
-
-width:35%;
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:20px;
-overflow:auto;
-
+  width:35%;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  overflow:auto;
 }
 
 .box{
-
-border:1px solid #00ff9c;
-padding:10px;
-background:rgba(0,0,0,0.7);
-
+  border:1px solid #00ff9c;
+  padding:10px;
+  background:rgba(0,0,0,0.7);
 }
 
 h3{
-
-margin-top:0;
-color:#6cf;
-
+  margin-top:0;
+  color:#6cf;
 }
 
 a{
-
-color:#00ff9c;
-text-decoration:none;
-
+  color:#00ff9c;
+  text-decoration:none;
 }
 
 #terminal-input{
-
-background:black;
-border:none;
-color:#00ff9c;
-font-family:monospace;
-outline:none;
-width:90%;
-
+  background:black;
+  border:none;
+  color:#00ff9c;
+  font-family:monospace;
+  outline:none;
+  width:90%;
 }
 
 .cursor{
-
-animation:blink 1s infinite;
-
+  animation:blink 1s infinite;
 }
 
 @keyframes blink{
-
-0%{opacity:1}
-50%{opacity:0}
-100%{opacity:1}
-
+  0%{opacity:1}
+  50%{opacity:0}
+  100%{opacity:1}
 }
 
-img{
+img{max-width:80px;}
 
-max-width:80px;
-
-}
-
-/* BOOT SCREEN */
-
-#boot{
-
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-color:#00ff9c;
-display:flex;
-align-items:center;
-justify-content:center;
-font-family:monospace;
-font-size:18px;
-z-index:9999;
-
+.glitch{
+  animation:glitch 0.12s;
 }
 
 @keyframes glitch {
-
-0%{transform:translate(0)}
-20%{transform:translate(-2px,1px)}
-40%{transform:translate(2px,-1px)}
-60%{transform:translate(-1px,2px)}
-80%{transform:translate(1px,-2px)}
-100%{transform:translate(0)}
-
+  0%{transform:translate(0)}
+  20%{transform:translate(-2px,1px)}
+  40%{transform:translate(2px,-1px)}
+  60%{transform:translate(-1px,2px)}
+  80%{transform:translate(1px,-2px)}
+  100%{transform:translate(0)}
 }
 
-.glitch{
-
-animation:glitch 0.12s;
-
-}
-  
 #akari-face{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:500px;
-height:300px;
-opacity:0.05;
-filter:blur(6px);
-pointer-events:none;
-z-index:0;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:500px;
+  height:300px;
+  opacity:0.05;
+  filter:blur(6px);
+  pointer-events:none;
+  z-index:0;
 }
 
 #akari-face svg{
-width:100%;
-height:100%;
-stroke:#ffffff;
-stroke-width:8;
-fill:none;
+  width:100%;
+  height:100%;
+  stroke:#ffffff;
+  stroke-width:8;
+  fill:none;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div id="akari-face">
-<svg viewBox="0 0 500 300">
-<line x1="120" y1="120" x2="200" y2="120" />
-<line x1="300" y1="120" x2="380" y2="120" />
-<rect x="220" y="170" width="60" height="60" />
-</svg>
+  <svg viewBox="0 0 500 300">
+    <line x1="120" y1="120" x2="200" y2="120" />
+    <line x1="300" y1="120" x2="380" y2="120" />
+    <rect x="220" y="170" width="60" height="60" />
+  </svg>
 </div>
 
 <div id="siesta-overlay"></div>
 
-<div id="boot">
-<pre>
-
-booting system...
-
-estableciendo conexión...
-nodo detectado: FranCavs
-
-conectando a the wired...
-
-</pre>
-</div>
-
 <header>
-
-<h1>FranCavs</h1>
-<p>conectado a the wired / neo venezia</p>
-
-<div id="contador"></div>
-
+  <h1>FranCavs</h1>
+  <p>conectado a the wired / neo venezia</p>
+  <div id="contador"></div>
 </header>
 
 <div class="container">
 
-<div class="terminal">
+  <div class="terminal">
+    <div id="terminal-output">
+      <p>estableciendo conexión...</p>
+      <p>nodo: FranCavs</p>
+      <p>estado: tranquilo</p>
+      <br>
+      <p>escribí "ayuda"</p>
+    </div>
 
-<div id="terminal-output">
+    <div>
+      <span>> </span>
+      <input id="terminal-input" autofocus>
+      <span class="cursor">█</span>
+    </div>
+  </div>
 
-<p>estableciendo conexión...</p>
-<p>nodo: FranCavs</p>
-<p>estado: tranquilo</p>
+  <div class="panel">
+    <div class="box">
+      <h3>transmisión musical</h3>
+      <div id="lastfm">conectando...</div>
+    </div>
 
-<br>
+    <div class="box">
+      <h3>actividad anime</h3>
+      <div id="anilist">consultando...</div>
+    </div>
 
-<p>escribí "ayuda"</p>
+    <div class="box">
+      <h3>links</h3>
+      <a href="https://x.com/francavs__">twitter</a><br>
+      <a href="https://anilist.co/user/FranCavs/">anilist</a><br>
+      <a href="https://open.spotify.com/user/tpmais9eyg4hq6p5yawc0fcw8">spotify</a>
+    </div>
 
-</div>
+    <div class="box">
+      <h3>archivo de hilos</h3>
+      <a href="#">blue spring</a><br>
+      <a href="#">iyashikei</a><br>
+      <a href="#">aria ranking</a>
+    </div>
 
-<div>
-
-<span>> </span>
-<input id="terminal-input" autofocus>
-<span class="cursor">█</span>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="box">
-
-<h3>transmisión musical</h3>
-
-<div id="lastfm">conectando...</div>
-
-</div>
-
-<div class="box">
-
-<h3>actividad anime</h3>
-
-<div id="anilist">consultando...</div>
-
-</div>
-
-<div class="box">
-
-<h3>links</h3>
-
-<a href="https://x.com/francavs__">twitter</a><br>
-<a href="https://anilist.co/user/FranCavs/">anilist</a><br>
-<a href="https://open.spotify.com/user/tpmais9eyg4hq6p5yawc0fcw8">spotify</a>
-
-</div>
-
-<div class="box">
-
-<h3>archivo de hilos</h3>
-
-<a href="#">blue spring</a><br>
-<a href="#">iyashikei</a><br>
-<a href="#">aria ranking</a>
-
-</div>
-
-<div class="box">
-
-<h3>registro del sistema</h3>
-
-<div id="mensaje"></div>
-
-</div>
-
-</div>
+    <div class="box">
+      <h3>registro del sistema</h3>
+      <div id="mensaje"></div>
+    </div>
+  </div>
 
 </div>
 
 <script>
-
-/* BOOT */
-
-setTimeout(()=>{
-document.getElementById("boot").style.display="none";
-},1500);
-
 /* TERMINAL */
-
 const input=document.getElementById("terminal-input");
 const output=document.getElementById("terminal-output");
 const baseTerminal=output.innerHTML;
 
 input.addEventListener("keypress",function(e){
-
-if(e.key==="Enter"){
-
-const command=input.value;
-
-output.innerHTML+=`<br><p>> ${command}</p><br>`;
-
-if(command==="ayuda"){
-
-output.innerHTML+=`
-<p>comandos</p>
-<p>sobre</p>
-<p>mate</p>
-<p>awawawa</p>
-<p>siesta</p>
-<p>lain</p>
-<p>gato</p>
-<p>limpiar</p>
-`;
-
-}
-
-else if(command==="sobre"){
-
-output.innerHTML+=`
-<p>FranCavs</p>
-<p>fan del slice of life</p>
-<p>iyashikei enjoyer</p>
-`;
-
-}
-
-else if(command==="mate"){
-
-output.innerHTML+=`
-<p>cebando mate...</p>
-<p>listo</p>
-`;
-
-}
-
-else if(command==="lain"){
-
-output.innerHTML+=`
-<p>present day</p>
-<p>present time</p>
-`;
-
-}
-
-else if(command==="gato"){
-
-output.innerHTML+=`
-<p>=^.^=</p>
-`;
-
-}
-
-else if(command==="awawawa"){
-
-const audio = new Audio("https://files.catbox.moe/o501zw.mp3");
-audio.volume = 0.9;
-audio.play();
-
-const face=document.getElementById("akari-face");
-face.style.opacity="0.15";
-
-setTimeout(()=>{
-face.style.opacity="0.05";
-},1200);
-
-output.innerHTML+=`
-<p>akari: awawaw
-
-else if(command==="siesta"){
-
-output.innerHTML+=`<p>tomando una siesta...</p>`;
-
-const overlay=document.getElementById("siesta-overlay");
-overlay.style.opacity="0.85";
-
-setTimeout(()=>{
-overlay.style.opacity="0";
-},5000);
-
-}
-
-else if(command==="limpiar"){
-
-output.innerHTML=baseTerminal;
-
-}
-
-else{
-
-output.innerHTML+=`<p>comando no reconocido</p>`;
-
-}
-
-input.value="";
-
-output.scrollTop = output.scrollHeight;
-
-}
-
+  if(e.key==="Enter"){
+    const command=input.value;
+    output.innerHTML+=`<br><p>> ${command}</p><br>`;
+    if(command==="ayuda"){
+      output.innerHTML+=`
+        <p>comandos</p>
+        <p>sobre</p>
+        <p>mate</p>
+        <p>awawawa</p>
+        <p>siesta</p>
+        <p>lain</p>
+        <p>gato</p>
+        <p>limpiar</p>
+      `;
+    } else if(command==="sobre"){
+      output.innerHTML+=`
+        <p>FranCavs</p>
+        <p>fan del slice of life</p>
+        <p>iyashikei enjoyer</p>
+      `;
+    } else if(command==="mate"){
+      output.innerHTML+=`<p>cebando mate...</p><p>listo</p>`;
+    } else if(command==="lain"){
+      output.innerHTML+=`<p>present day</p><p>present time</p>`;
+    } else if(command==="gato"){
+      output.innerHTML+=`<p>=^.^=</p>`;
+    } else if(command==="awawawa"){
+      const audio = new Audio("https://files.catbox.moe/o501zw.mp3");
+      audio.volume = 0.9;
+      audio.play();
+      const face=document.getElementById("akari-face");
+      face.style.opacity="0.15";
+      setTimeout(()=>{face.style.opacity="0.05";},1200);
+      output.innerHTML+=`<p>akari: awawawa~</p>`;
+    } else if(command==="siesta"){
+      output.innerHTML+=`<p>tomando una siesta...</p>`;
+      const overlay=document.getElementById("siesta-overlay");
+      overlay.style.opacity="0.85";
+      setTimeout(()=>{overlay.style.opacity="0";},5000);
+    } else if(command==="limpiar"){
+      output.innerHTML=baseTerminal;
+    } else {
+      output.innerHTML+=`<p>comando no reconocido</p>`;
+    }
+    input.value="";
+    output.scrollTop = output.scrollHeight;
+  }
 });
 
 function wiredGlitch(){
-
-const body=document.body;
-
-body.classList.add("glitch");
-
-setTimeout(()=>{
-body.classList.remove("glitch");
-},120);
-
+  document.body.classList.add("glitch");
+  setTimeout(()=>{document.body.classList.remove("glitch");},120);
 }
 
 setInterval(()=>{
-
-if(Math.random()<0.15){
-wiredGlitch();
-}
-
+  if(Math.random()<0.15){ wiredGlitch(); }
 },4000);
-  
-/* LASTFM */
 
+/* LASTFM */
 const username="FranCavs12";
 const apiKey="2c7d6975c099f7f3f9bee35d245a3ddb";  
 
 async function getLastTrack(){
-
-const url=`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
-
-const response=await fetch(url);
-const data=await response.json();
-
-const track=data.recenttracks.track[0];
-
-const artist=track.artist["#text"];
-const name=track.name;
-const image=track.image[2]["#text"];
-
-document.getElementById("lastfm").innerHTML=
-`
-<img src="${image}">
-<br>
-${artist} — ${name}
-`;
-
+  try{
+    const url=`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`;
+    const response=await fetch(url);
+    const data=await response.json();
+    const track=data.recenttracks.track[0];
+    const artist=track.artist["#text"];
+    const name=track.name;
+    const image=track.image[2]["#text"];
+    document.getElementById("lastfm").innerHTML=`<img src="${image}"><br>${artist} — ${name}`;
+  }catch(e){
+    document.getElementById("lastfm").innerText="error al cargar track";
+  }
 }
 
 /* ANILIST */
-
 async function getAnime(){
-
-const query=`
-query {
-MediaListCollection(userName:"FranCavs",type:ANIME,status:CURRENT){
-lists{
-entries{
-progress
-media{
-title{romaji}
-coverImage{medium}
-}
-}
-}
-}
-}
-`;
-
-const response=await fetch("https://graphql.anilist.co",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({query})
-});
-
-const data=await response.json();
-const entry=data.data.MediaListCollection.lists[0].entries[0];
-
-document.getElementById("anilist").innerHTML=
-`
-<img src="${entry.media.coverImage.medium}">
-<br>
-${entry.media.title.romaji}
-<br>
-episodio ${entry.progress}
-`;
-
+  try{
+    const query=`query {
+      MediaListCollection(userName:"FranCavs",type:ANIME,status:CURRENT){
+        lists{
+          entries{
+            progress
+            media{
+              title{romaji}
+              coverImage{medium}
+            }
+          }
+        }
+      }
+    }`;
+    const response=await fetch("https://graphql.anilist.co",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query})
+    });
+    const data=await response.json();
+    const entry=data.data.MediaListCollection.lists[0].entries[0];
+    document.getElementById("anilist").innerHTML=`<img src="${entry.media.coverImage.medium}"><br>${entry.media.title.romaji}<br>episodio ${entry.progress}`;
+  }catch(e){
+    document.getElementById("anilist").innerText="error al cargar anime";
+  }
 }
 
 /* CONTADOR */
-
 async function contador(){
-
-const url="https://api.countapi.xyz/hit/francavs-node/visitas";
-
-const response=await fetch(url);
-const data=await response.json();
-
-document.getElementById("contador").innerText=
-`usuarios conectados a la red: ${data.value}`;
-
+  try{
+    const url="https://api.countapi.xyz/hit/francavs-node/visitas";
+    const response=await fetch(url);
+    const data=await response.json();
+    document.getElementById("contador").innerText=`usuarios conectados a la red: ${data.value}`;
+  }catch(e){
+    document.getElementById("contador").innerText=`usuarios conectados a la red: ?`;
+  }
 }
 
 /* MENSAJES */
-
 const mensajes=[
-
-"No quiero decir que era feliz en ese momento, diría que fui feliz en ese momento, justo como lo soy ahora. Miraré hacia adelante y encontraré una nueva felicidad en lugar de apegarme a los recuerdos dichosos del pasado y tener miedo de cambiar. — Akari Mizunashi",
-"Cuando una chica cambia su peinado, cambia su forma de ver la vida. — Alicia Florence",
-"No puedes tirar lo que es importante para ti. Se quedan guardados en lo más profundo de tu corazón. — Alicia Florence",
-"Cuando escuchas todos los sonidos a tu alrededor, sientes que el día ha comenzado realmente. — Akari Mizunashi",
-"Como un espejo que te refleja, la gente también reflejará tu corazón. Intenta sonreír, y seguro que todos los que están delante de ti sonreirán a tus espaldas. — Athena Glory",
-"Ser capaz de encontrar tu alma gemela casi parece un milagro. ¿Pero no es acaso cada encuentro un milagro en sí mismo? — Akari Mizunashi",
-"Si no fuera por vosotras, es posible que los aquí reunidos ni nos conociéramos. Este es el fruto de vuestros maravillosos encuentros. — Alicia Florence",
-"¡Las ñoñerías están prohibidas! — Aika S. Granzchesta",
-"Tienes la mayor riqueza de todas porque eliges ser feliz. — Alicia Florence",
-"En vez de decir 'Aquellos fueron buenos tiempos', deberíamos decir 'Aquellos también fueron buenos tiempos'. — Akira E. Ferrari",
-"Señorita experta de la felicidad. — Dueño del café Florian sobre Akari",
-"El hecho de que hayan tantas cosas que tú no conozcas, significa que todavía quedan maravillas ahí afuera. — Alicia Florence",
-"Cuando pasas por el filtro de Akari, ves cosas que nunca habías visto. Cosas que no parecen especiales empiezan a brillar. — Aika y Alice",
-"Porque soy la aliada de Alice-chan. — Athena Glory",
-"¿Me representa a mí, tal y como soy ahora? — Akari Mizunashi",
-"¡Solo Alicia puede ser Alicia! No intentes ser otra persona. Tienes que convertirte en la mejor undine de Neo‑Venezia tú sola. — Akira E. Ferrari",
-"A este planeta que me ha dado tantos encuentros irremplazables, y a esta ciudad que ha estado cuidando de mí, gracias. — Akari Mizunashi",
-"¿Pero por ahora estará bien que me quede junto a esta persona, a la que quiero y aprecio tanto, solo por un poquito más? — Akari Mizunashi",
-"Si no tienes algo, lo único que tienes que hacer es crearlo. ¿Ves? ¡Un precioso trébol de cuatro hojas! — Aika S. Granzchesta",
-"Entre mentor y pupilo no hay gran diferencia. No puedo evitar ponerme en la piel de Akari‑chan y compartir finalmente su felicidad. — Alicia Florence",
-"Quiero ver el mundo que se refleja en sus preciosos ojos azules junto a él. — Akino Ametsuchi",
-"¿Ha oído hablar de las tres Hadas del Agua? Puede que no lo parezca, pero soy la aprendiz número uno de la Sirena. — Alice Carroll",
-"Me alegro mucho de haberte conocido, mi Aquamarina. — Alicia Florence",
-"Encontrarte por casualidad con esa persona en la que pensabas puede parecer pequeño, pero incluso esas cosas son milagros. — Akari Mizunashi",
-"Puedes hacer tu propia magia y convertirte tú misma en la Bruja Befana. — Athena Glory",
-"La tristeza o la soledad que sientes por una despedida indica lo importante que ha sido para ti. — Akari Mizunashi",
-"Esta es una historia común, adaptada a personas comunes como nosotras. — Aika y Akira",
-"—Te has esforzado mucho, aun siendo así de talentosa. —No es exactamente así. Tengo talento por todo lo que me esforcé. — Aika y Akira"
-
+  "No quiero decir que era feliz en ese momento, diría que fui feliz en ese momento...",
+  "Cuando una chica cambia su peinado, cambia su forma de ver la vida. — Alicia Florence",
+  "No puedes tirar lo que es importante para ti...",
+  "Cuando escuchas todos los sonidos a tu alrededor, sientes que el día ha comenzado realmente. — Akari Mizunashi",
+  "Como un espejo que te refleja, la gente también reflejará tu corazón..."
 ];
+document.getElementById("mensaje").innerText=mensajes[Math.floor(Math.random()*mensajes.length)];
 
-document.getElementById("mensaje").innerText=
-mensajes[Math.floor(Math.random()*mensajes.length)];
-
+/* INIT */
 getLastTrack();
 getAnime();
 contador();
-
 </script>
 
 </body>
