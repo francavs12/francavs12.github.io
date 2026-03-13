@@ -186,11 +186,40 @@ animation:glitch 0.12s;
 
 }
   
+#akari-face{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:500px;
+height:300px;
+opacity:0.05;
+filter:blur(6px);
+pointer-events:none;
+z-index:0;
+}
+
+#akari-face svg{
+width:100%;
+height:100%;
+stroke:#ffffff;
+stroke-width:8;
+fill:none;
+}
+
 </style>
 
 </head>
 
 <body>
+
+<div id="akari-face">
+<svg viewBox="0 0 500 300">
+<line x1="120" y1="120" x2="200" y2="120" />
+<line x1="300" y1="120" x2="380" y2="120" />
+<rect x="220" y="170" width="60" height="60" />
+</svg>
+</div>
 
 <div id="siesta-overlay"></div>
 
@@ -371,11 +400,15 @@ const audio = new Audio("https://files.catbox.moe/o501zw.mp3");
 audio.volume = 0.9;
 audio.play();
 
-output.innerHTML+=`
-<p>akari: awawawa~</p>
-`;
+const face=document.getElementById("akari-face");
+face.style.opacity="0.15";
 
-}
+setTimeout(()=>{
+face.style.opacity="0.05";
+},1200);
+
+output.innerHTML+=`
+<p>akari: awawaw
 
 else if(command==="siesta"){
 
