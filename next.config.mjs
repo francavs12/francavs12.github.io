@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  output: 'export', // 👈 ESTA es la clave
 }
 
 export default nextConfig
