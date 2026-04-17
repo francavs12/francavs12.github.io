@@ -1,0 +1,326 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Lain Theme (default) - Dark, Wired aesthetic */
+:root,
+.theme-lain {
+  --background: oklch(0.05 0.01 180);
+  --foreground: oklch(0.85 0.15 165);
+  --card: oklch(0.08 0.02 180);
+  --card-foreground: oklch(0.85 0.15 165);
+  --popover: oklch(0.08 0.02 180);
+  --popover-foreground: oklch(0.85 0.15 165);
+  --primary: oklch(0.7 0.2 165);
+  --primary-foreground: oklch(0.05 0.01 180);
+  --secondary: oklch(0.15 0.03 180);
+  --secondary-foreground: oklch(0.75 0.12 200);
+  --muted: oklch(0.12 0.02 180);
+  --muted-foreground: oklch(0.55 0.08 165);
+  --accent: oklch(0.65 0.15 200);
+  --accent-foreground: oklch(0.05 0.01 180);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.3 0.1 165);
+  --input: oklch(0.15 0.03 180);
+  --ring: oklch(0.7 0.2 165);
+  --radius: 0.25rem;
+  
+  /* Custom colors for the theme */
+  --wired-green: oklch(0.7 0.2 165);
+  --wired-cyan: oklch(0.65 0.15 200);
+  --aria-blue: oklch(0.6 0.12 230);
+  --aria-pink: oklch(0.7 0.12 350);
+  --glow: oklch(0.8 0.2 165);
+  
+  /* Theme-specific flags */
+  --scanlines-opacity: 0.03;
+  --glitch-enabled: 1;
+}
+
+/* Aria Theme - Neo-Venezia sunset aesthetic */
+.theme-aria {
+  --background: oklch(0.15 0.03 300);
+  --foreground: oklch(0.88 0.08 50);
+  --card: oklch(0.18 0.04 290);
+  --card-foreground: oklch(0.88 0.08 50);
+  --popover: oklch(0.18 0.04 290);
+  --popover-foreground: oklch(0.88 0.08 50);
+  --primary: oklch(0.72 0.14 45);
+  --primary-foreground: oklch(0.15 0.03 300);
+  --secondary: oklch(0.22 0.05 290);
+  --secondary-foreground: oklch(0.75 0.1 50);
+  --muted: oklch(0.2 0.04 295);
+  --muted-foreground: oklch(0.6 0.08 40);
+  --accent: oklch(0.65 0.15 350);
+  --accent-foreground: oklch(0.95 0.02 50);
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.35 0.08 320);
+  --input: oklch(0.18 0.04 290);
+  --ring: oklch(0.72 0.14 45);
+  
+  /* Custom colors for Aria - warm sunset tones */
+  --wired-green: oklch(0.72 0.14 45);
+  --wired-cyan: oklch(0.65 0.12 35);
+  --aria-blue: oklch(0.5 0.1 280);
+  --aria-pink: oklch(0.7 0.15 350);
+  --glow: oklch(0.75 0.18 45);
+  
+  /* Theme-specific flags */
+  --scanlines-opacity: 0;
+  --glitch-enabled: 0;
+}
+
+@theme inline {
+  --font-sans: 'VT323', monospace;
+  --font-mono: 'VT323', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    transition: background-color 0.8s ease, color 0.5s ease;
+  }
+}
+
+/* Theme transition effect */
+.theme-transitioning {
+  pointer-events: none;
+}
+
+.theme-transitioning * {
+  transition: all 0.5s ease !important;
+}
+
+/* Disconnect effect for theme change */
+@keyframes disconnect {
+  0% { 
+    opacity: 1; 
+    filter: brightness(1);
+  }
+  20% { 
+    opacity: 0.5; 
+    filter: brightness(2) saturate(0);
+  }
+  40% { 
+    opacity: 0.2;
+    filter: brightness(0.5);
+  }
+  60% {
+    opacity: 0;
+    filter: brightness(0);
+  }
+  100% { 
+    opacity: 1; 
+    filter: brightness(1);
+  }
+}
+
+@keyframes reconnect {
+  0% { 
+    opacity: 0; 
+    filter: brightness(0);
+    transform: scale(0.98);
+  }
+  30% { 
+    opacity: 0.3; 
+    filter: brightness(1.5) saturate(0.5);
+  }
+  60% { 
+    opacity: 0.7; 
+    filter: brightness(1.2);
+    transform: scale(1);
+  }
+  100% { 
+    opacity: 1; 
+    filter: brightness(1);
+  }
+}
+
+.theme-disconnect {
+  animation: disconnect 0.6s ease-out forwards;
+}
+
+.theme-reconnect {
+  animation: reconnect 0.8s ease-in forwards;
+}
+
+/* CRT Scanlines - respects theme */
+.crt-scanlines::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: var(--scanlines-opacity);
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 255, 150, 1) 2px,
+    rgba(0, 255, 150, 1) 3px
+  );
+  transition: opacity 0.5s ease;
+}
+
+/* CRT Flicker */
+.crt-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+/* Glitch Effect */
+@keyframes glitch {
+  0% { transform: translate(0); filter: hue-rotate(0deg); }
+  10% { transform: translate(-3px, 2px); }
+  20% { transform: translate(3px, -2px); filter: hue-rotate(90deg); }
+  30% { transform: translate(-2px, -1px); }
+  40% { transform: translate(2px, 1px); filter: hue-rotate(180deg); }
+  50% { transform: translate(-1px, 2px); }
+  60% { transform: translate(1px, -1px); filter: hue-rotate(270deg); }
+  70% { transform: translate(-2px, 1px); }
+  80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
+  90% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0); filter: hue-rotate(0deg); }
+}
+
+.glitch {
+  animation: glitch 0.15s ease-in-out;
+}
+
+/* Chromatic Aberration on glitch */
+.glitch-chromatic {
+  text-shadow: 
+    -2px 0 #ff0000,
+    2px 0 #00ffff;
+}
+
+/* Cursor Blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Data Stream Animation */
+@keyframes data-stream {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Water Ripple Effect */
+@keyframes water-ripple {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Floating Animation for Aria elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pulse Glow */
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--wired-green), 0 0 10px var(--wired-green);
+    border-color: var(--wired-green);
+  }
+  50% { 
+    box-shadow: 0 0 15px var(--wired-green), 0 0 30px var(--wired-green);
+    border-color: var(--glow);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Text Glow */
+.text-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+}
+
+/* Noise overlay */
+@keyframes noise {
+  0%, 100% { background-position: 0 0; }
+  10% { background-position: -5% -10%; }
+  20% { background-position: -15% 5%; }
+  30% { background-position: 7% -25%; }
+  40% { background-position: -5% 25%; }
+  50% { background-position: -15% 10%; }
+  60% { background-position: 15% 0%; }
+  70% { background-position: 0% 15%; }
+  80% { background-position: 3% 35%; }
+  90% { background-position: -10% 10%; }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Selection */
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
