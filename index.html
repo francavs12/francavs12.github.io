@@ -636,7 +636,7 @@ footer svg { display:block; margin:0 auto 12px; opacity:0.35; }
    2. Creá un bin con: {"mensajes":[]}
    3. Pegá tu API key y Bin ID acá abajo
    ══════════════════════════════════════════════════════════════ */
-const JSONBIN_KEY = "$2a$10$uCQpcIPVTaFgb/QJFkmf9uQvGRy7zaM1PtTDA8Z/CJ0guRF0tWHkG";
+const JSONBIN_KEY = "$2a$10$GJgOK55sfXcEy3fBglDztulrd1RMJfYQ4xd27QGKATUf2WtC1nJ/C";
 const JSONBIN_BIN = "6a2b5c5df5f4af5e29e35b6b";
 
 /* ── FORZAR SCROLL ARRIBA AL CARGAR ──────────────────────────── */
@@ -1029,7 +1029,7 @@ async function cargarForo(){
   }
   try {
     const r = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN}/latest`,{
-      headers:{"X-Master-Key": JSONBIN_KEY}
+      headers:{"X-Access-Key": JSONBIN_KEY}
     });
     const data = await r.json();
     renderMensajes(data.record.mensajes || []);
@@ -1045,7 +1045,7 @@ async function enviarMensaje(){
   try {
     // leer estado actual
     const r1 = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN}/latest`,{
-      headers:{"X-Master-Key":JSONBIN_KEY}
+      headers:{"X-Access-Key":JSONBIN_KEY}
     });
     const data1 = await r1.json();
     const lista = data1.record.mensajes || [];
@@ -1053,7 +1053,7 @@ async function enviarMensaje(){
     // guardar
     await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN}`,{
       method:"PUT",
-      headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY},
+      headers:{"Content-Type":"application/json","X-Access-Key":JSONBIN_KEY},
       body: JSON.stringify({ mensajes: lista })
     });
     foroTexto.value = "";
