@@ -580,7 +580,7 @@ footer svg { display:block; margin:0 auto 12px; opacity:0.35; }
       </div>
       <div class="log-input-row">
         <span class="log-prompt-sign">∿</span>
-        <input id="terminal-input" placeholder="comando..." autofocus>
+        <input id="terminal-input" placeholder="comando...">
         <span class="cursor">▍</span>
       </div>
     </div>
@@ -639,11 +639,20 @@ footer svg { display:block; margin:0 auto 12px; opacity:0.35; }
 const JSONBIN_KEY = "$2a$10$uCQpcIPVTaFgb/QJFkmf9uQvGRy7zaM1PtTDA8Z/CJ0guRF0tWHkG";
 const JSONBIN_BIN = "6a2b5c5df5f4af5e29e35b6b";
 
+/* ── FORZAR SCROLL ARRIBA AL CARGAR ──────────────────────────── */
+window.scrollTo(0, 0);
+window.addEventListener("load", () => window.scrollTo(0, 0));
+
 /* ── BOOT ──────────────────────────────────────────────────── */
 setTimeout(() => {
   const boot = document.getElementById("boot");
   boot.classList.add("fade-out");
-  setTimeout(() => boot.style.display = "none", 1300);
+  setTimeout(() => {
+    boot.style.display = "none";
+    window.scrollTo(0, 0);
+    // foco manual sin que el navegador haga scroll hacia el input
+    document.getElementById("terminal-input")?.focus({ preventScroll: true });
+  }, 1300);
 }, 2200);
 
 /* ── MODO DÍA/NOCHE ────────────────────────────────────────── */
