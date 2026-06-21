@@ -834,10 +834,11 @@ function spacer(){ addLine('&nbsp;'); }
 
 input.addEventListener("keypress", function(e){
   if(e.key !== "Enter") return;
-  const cmd = input.value.trim();
-  if(!cmd){ input.value=""; return; }
+  const cmdOriginal = input.value.trim();
+  if(!cmdOriginal){ input.value=""; return; }
+  const cmd = cmdOriginal.toLowerCase();
   spacer();
-  addLine(`∿ ${cmd}`, 'cmd-echo');
+  addLine(`∿ ${cmdOriginal}`, 'cmd-echo');
   spacer();
 
   switch(cmd){
@@ -990,7 +991,7 @@ input.addEventListener("keypress", function(e){
       input.value = ""; return;
 
     default:
-      addLine(`comando "<em>${cmd}</em>" no reconocido.`);
+      addLine(`comando "<em>${cmdOriginal}</em>" no reconocido.`);
       addLine("escribí <strong>ayuda</strong> para ver la lista.");
   }
   spacer();
