@@ -1094,7 +1094,7 @@ async function getLastTrack(){
 async function getAnime(){
   try {
     const query=`query{MediaListCollection(userName:"FranCavs",type:ANIME,sort:UPDATED_TIME_DESC){lists{entries{progress status updatedAt media{title{romaji}coverImage{medium}}}}}}`;
-    const data=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query})}).then(r=>r.json());
+    const data=await fetch("https://muddy-recipe-5a76.franprocapo.workers.dev", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query})}).then(r=>r.json());
     const lists = data.data.MediaListCollection.lists || [];
     const allEntries = lists.flatMap(l => l.entries);
     if(!allEntries.length) throw new Error("sin entradas");
