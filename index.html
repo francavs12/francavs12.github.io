@@ -1091,21 +1091,82 @@ async function getLastTrack(){
 }
 
 /* ── ANILIST ────────────────────────────────────────────────── */
-async function getAnime(){
+async function getAnime() {
   try {
-    const query=`query{MediaListCollection(userName:"FranCavs",type:ANIME,sort:UPDATED_TIME_DESC){lists{entries{progress status updatedAt media{title{romaji}coverImage{medium}}}}}}`;
-    const data=await fetch("https://muddy-recipe-5a76.franprocapo.workers.dev", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query})}).then(r=>r.json());
-    const lists = data.data.MediaListCollection.lists || [];
+    const query = `
+      query ($user: String) {
+        MediaListCollection(userName: $user, type: ANIME) {
+          lists {
+            entries {
+              progress
+              status
+              updatedAt
+              media {
+                title {
+                  romaji
+                }
+                coverImage {
+                  medium
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch("https://muddy-recipe-5a76.franprocapo.workers.dev", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          user: "FranCavs"
+        }
+      })
+    });
+
+    const data = await response.json();
+
+    console.log("AniList respuesta:", data);
+
+    if (data.errors) {
+      throw new Error(JSON.stringify(data.errors));
+    }
+
+    const lists = data.data.MediaListCollection?.lists ?? [];
     const allEntries = lists.flatMap(l => l.entries);
-    if(!allEntries.length) throw new Error("sin entradas");
-    const entry = allEntries.reduce((latest, e) => (e.updatedAt > latest.updatedAt ? e : latest), allEntries[0]);
+
+    if (!allEntries.length) {
+      throw new Error("Sin entradas.");
+    }
+
+    const entry = allEntries.reduce((a, b) =>
+      a.updatedAt > b.updatedAt ? a : b
+    );
+
     const statusLabel = {
-      CURRENT: "viendo", COMPLETED: "completado", PAUSED: "en pausa",
-      DROPPED: "abandonado", PLANNING: "planeado", REPEATING: "re-viendo"
+      CURRENT: "viendo",
+      COMPLETED: "completado",
+      PAUSED: "en pausa",
+      DROPPED: "abandonado",
+      PLANNING: "planeado",
+      REPEATING: "re-viendo"
     }[entry.status] || "";
-    document.getElementById("anilist").innerHTML=
-      `${entry.media.coverImage.medium?`<img src="${entry.media.coverImage.medium}" alt="">`:""}<span style="color:var(--gondola);font-size:0.88rem;">${entry.media.title.romaji}</span><br><span style="font-size:0.76rem;color:var(--text-faint);">ep. ${entry.progress}${statusLabel?` · ${statusLabel}`:""}</span>`;
-  } catch { document.getElementById("anilist").textContent="sin señal"; }
+
+    document.getElementById("anilist").innerHTML =
+      `${entry.media.coverImage.medium ? `<img src="${entry.media.coverImage.medium}" alt="">` : ""}
+      <span style="color:var(--gondola);font-size:0.88rem;">${entry.media.title.romaji}</span><br>
+      <span style="font-size:0.76rem;color:var(--text-faint);">
+        ep. ${entry.progress}${statusLabel ? ` · ${statusLabel}` : ""}
+      </span>`;
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("anilist").textContent = "sin señal";
+  }
 }
 
 /* ── CONTADOR ANIMADO ───────────────────────────────────────── */
