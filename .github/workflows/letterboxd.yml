@@ -1,0 +1,67 @@
+name: Actualizar Letterboxd
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Leer RSS de Letterboxd
+        run: |
+          python3 - << 'EOF'
+          import json, re, sys, urllib.request
+          import xml.etree.ElementTree as ET
+
+          URL = "https://letterboxd.com/francavs__/rss/"
+          req = urllib.request.Request(URL, headers={
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+              "Accept": "application/rss+xml, application/xml, text/xml, */*",
+          })
+          try:
+              data = urllib.request.urlopen(req, timeout=30).read()
+          except Exception as e:
+              print("No se pudo leer el RSS:", e)
+              sys.exit(1)
+
+          root = ET.fromstring(data)
+          local = lambda t: t.split("}")[-1]
+
+          for item in root.iter("item"):
+              f = {local(c.tag): (c.text or "") for c in item}
+              if "filmTitle" not in f:
+                  continue
+              m = re.search(r'<img src="([^"]+)"', f.get("description", ""))
+              try:
+                  rating = float(f["memberRating"])
+              except (KeyError, ValueError):
+                  rating = None
+              out = {
+                  "title": f["filmTitle"],
+                  "year": f.get("filmYear", ""),
+                  "rating": rating,
+                  "rewatch": f.get("rewatch") == "Yes",
+                  "poster": m.group(1) if m else "",
+              }
+              with open("letterboxd.json", "w", encoding="utf-8") as fh:
+                  json.dump(out, fh, ensure_ascii=False, indent=2)
+              print("Guardado:", out)
+              break
+          else:
+              print("El feed no tiene peliculas.")
+              sys.exit(1)
+          EOF
+
+      - name: Guardar si cambió
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add letterboxd.json
+          git diff --staged --quiet || (git commit -m "actualizar letterboxd" && git push)
