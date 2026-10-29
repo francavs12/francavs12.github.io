@@ -1182,61 +1182,98 @@ async function getAnime() {
   }
 }
 
-/* ── LETTERBOXD (vía RSS) ───────────────────────────────────── */
+/* ── LETTERBOXD ─────────────────────────────────────────────── */
 const LB_USER = "francavs__";
+const LB_RSS  = `https://letterboxd.com/${LB_USER}/rss/`;
 
 function escHTML(s){
   return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-// Letterboxd no permite pedir su RSS directo desde el navegador (CORS),
-// así que pasamos por proxies públicos. Si uno falla, prueba el siguiente.
-async function fetchLetterboxdXML(){
-  const rss = `https://letterboxd.com/${LB_USER}/rss/`;
+function renderMovie(m){
+  let stars = "";
+  if(typeof m.rating === "number" && !isNaN(m.rating))
+    stars = "★".repeat(Math.floor(m.rating)) + (m.rating % 1 ? "½" : "");
+  const detalle = [stars, m.rewatch ? "re-watch" : ""].filter(Boolean).join(" · ");
+  document.getElementById("letterboxd").innerHTML =
+    `${m.poster ? `<img src="${escHTML(m.poster)}" alt="">` : ""}` +
+    `<span style="color:var(--gondola);font-size:0.88rem;">${escHTML(m.title)}${m.year ? ` (${escHTML(m.year)})` : ""}</span>` +
+    `${detalle ? `<br><span style="font-size:0.76rem;color:var(--text-faint);">${escHTML(detalle)}</span>` : ""}`;
+}
+
+/* Fuente 1: letterboxd.json del propio repo (lo actualiza una GitHub Action) */
+async function movieFromLocal(){
+  const r = await fetch("letterboxd.json?v=" + Date.now(), { cache: "no-store" });
+  if(!r.ok) throw new Error("letterboxd.json devolvió " + r.status);
+  const d = await r.json();
+  if(!d.title) throw new Error("letterboxd.json sin datos");
+  return d;
+}
+
+/* Fuente 2: RSS leído a través de proxies CORS públicos */
+async function movieFromProxies(){
   const proxies = [
     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
     u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
   ];
   for(const makeUrl of proxies){
     try{
-      const r = await fetch(makeUrl(rss));
-      if(!r.ok) continue;
+      const r = await fetch(makeUrl(LB_RSS), { signal: AbortSignal.timeout(8000) });
+      if(!r.ok) throw new Error("HTTP " + r.status);
       const txt = await r.text();
-      if(txt.includes("<rss")) return txt;
-    } catch {}
+      if(!txt.includes("<rss")) throw new Error("respuesta sin RSS");
+      const xml = new DOMParser().parseFromString(txt, "text/xml");
+      const item = [...xml.getElementsByTagName("item")]
+        .find(i => i.getElementsByTagName("letterboxd:filmTitle").length);
+      if(!item) throw new Error("sin películas en el feed");
+      const get = tag => item.getElementsByTagName(tag)[0]?.textContent || "";
+      return {
+        title:   get("letterboxd:filmTitle"),
+        year:    get("letterboxd:filmYear"),
+        rating:  parseFloat(get("letterboxd:memberRating")),
+        rewatch: get("letterboxd:rewatch") === "Yes",
+        poster:  (get("description").match(/<img src="([^"]+)"/) || [])[1] || "",
+      };
+    } catch(err){ console.warn("Letterboxd proxy falló:", err.message); }
   }
-  throw new Error("no se pudo leer el RSS");
+  throw new Error("fallaron todos los proxies");
+}
+
+/* Fuente 3: rss2json (convierte el RSS a JSON con CORS habilitado) */
+async function movieFromRss2Json(){
+  const r = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(LB_RSS)}`,
+                        { signal: AbortSignal.timeout(8000) });
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  const d = await r.json();
+  if(d.status !== "ok") throw new Error(d.message || "rss2json error");
+  // las películas tienen título "Nombre, 2021 - ★★★★"; las listas no
+  for(const it of d.items){
+    const m = it.title.match(/^(.*), (\d{4})(?: - (.*))?$/);
+    if(!m) continue;
+    const rs = m[3] || "";
+    const rating = (rs.match(/★/g) || []).length + (rs.includes("½") ? 0.5 : 0);
+    return {
+      title: m[1], year: m[2],
+      rating: rs ? rating : NaN,
+      rewatch: false,
+      poster: (it.description.match(/<img src="([^"]+)"/) || [])[1] || it.thumbnail || "",
+    };
+  }
+  throw new Error("sin películas en el feed");
 }
 
 async function getMovie(){
-  const el = document.getElementById("letterboxd");
-  try{
-    const xml = new DOMParser().parseFromString(await fetchLetterboxdXML(), "text/xml");
-    const items = [...xml.getElementsByTagName("item")];
-    // el feed también trae listas: nos quedamos con la primera entrada que sea una película
-    const item = items.find(i => i.getElementsByTagName("letterboxd:filmTitle").length);
-    if(!item) throw new Error("sin películas");
-
-    const get = tag => item.getElementsByTagName(tag)[0]?.textContent || "";
-    const title   = get("letterboxd:filmTitle");
-    const year    = get("letterboxd:filmYear");
-    const rating  = parseFloat(get("letterboxd:memberRating"));
-    const rewatch = get("letterboxd:rewatch") === "Yes";
-    const poster  = (get("description").match(/<img src="([^"]+)"/) || [])[1] || "";
-
-    let stars = "";
-    if(!isNaN(rating)) stars = "★".repeat(Math.floor(rating)) + (rating % 1 ? "½" : "");
-
-    const detalle = [stars, rewatch ? "re-watch" : ""].filter(Boolean).join(" · ");
-
-    el.innerHTML =
-      `${poster ? `<img src="${escHTML(poster)}" alt="">` : ""}` +
-      `<span style="color:var(--gondola);font-size:0.88rem;">${escHTML(title)}${year ? ` (${escHTML(year)})` : ""}</span>` +
-      `${detalle ? `<br><span style="font-size:0.76rem;color:var(--text-faint);">${escHTML(detalle)}</span>` : ""}`;
-  } catch (err) {
-    console.error("Letterboxd:", err);
-    el.textContent = "sin señal";
+  const fuentes = [
+    ["letterboxd.json", movieFromLocal],
+    ["proxies",         movieFromProxies],
+    ["rss2json",        movieFromRss2Json],
+  ];
+  for(const [nombre, fn] of fuentes){
+    try{ renderMovie(await fn()); return; }
+    catch(err){ console.warn(`Letterboxd (${nombre}) falló:`, err.message); }
   }
+  document.getElementById("letterboxd").textContent = "sin señal";
 }
 
 /* ── CONTADOR ANIMADO ───────────────────────────────────────── */
