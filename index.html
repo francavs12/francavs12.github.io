@@ -176,7 +176,8 @@ body::before {
 }
 
 body.noche #lastfm span,
-body.noche #anilist span { color: #e8f4f8 !important; }
+body.noche #anilist span,
+body.noche #letterboxd span { color: #e8f4f8 !important; }
 body.noche .mp-song-name { color: #e8f4f8; }
 
 /* ── WRAPPER ────────────────────────────────────────────────── */
@@ -430,9 +431,17 @@ body.noche #terminal-input { color: #e8f4f8; }
 }
 .box a:hover { color:var(--aqua-deep); border-bottom-color:var(--aqua-light); padding-left:4px; }
 .box-content { font-size:0.82rem; color:var(--text-soft); line-height:1.7; transition: color 1.5s ease; }
-#lastfm img, #anilist img {
+#lastfm img, #anilist img, #letterboxd img {
   max-width:56px; border-radius:3px; margin-bottom:8px;
   display:block; border:1px solid var(--sand);
+}
+.act-label {
+  font-size: 0.64rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 6px;
+}
+.act-divider {
+  border-top: 1px dashed var(--sand); margin: 14px 0 12px;
+  transition: border-color 1.5s ease;
 }
 .quote-box { background: linear-gradient(135deg, var(--peach-soft), var(--aqua-light)); border:none; }
 .quote-box::before { background: var(--gold); }
@@ -592,8 +601,12 @@ footer svg { display:block; margin:0 auto 12px; opacity:0.35; }
         <div id="lastfm" class="box-content">conectando…</div>
       </div>
       <div class="box">
-        <div class="box-title">actividad anime</div>
+        <div class="box-title">actividad</div>
+        <div class="act-label">anime</div>
         <div id="anilist" class="box-content">consultando…</div>
+        <div class="act-divider"></div>
+        <div class="act-label">película</div>
+        <div id="letterboxd" class="box-content">consultando…</div>
       </div>
       <div class="box">
         <div class="box-title">canales</div>
@@ -1169,6 +1182,63 @@ async function getAnime() {
   }
 }
 
+/* ── LETTERBOXD (vía RSS) ───────────────────────────────────── */
+const LB_USER = "francavs__";
+
+function escHTML(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// Letterboxd no permite pedir su RSS directo desde el navegador (CORS),
+// así que pasamos por proxies públicos. Si uno falla, prueba el siguiente.
+async function fetchLetterboxdXML(){
+  const rss = `https://letterboxd.com/${LB_USER}/rss/`;
+  const proxies = [
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  ];
+  for(const makeUrl of proxies){
+    try{
+      const r = await fetch(makeUrl(rss));
+      if(!r.ok) continue;
+      const txt = await r.text();
+      if(txt.includes("<rss")) return txt;
+    } catch {}
+  }
+  throw new Error("no se pudo leer el RSS");
+}
+
+async function getMovie(){
+  const el = document.getElementById("letterboxd");
+  try{
+    const xml = new DOMParser().parseFromString(await fetchLetterboxdXML(), "text/xml");
+    const items = [...xml.getElementsByTagName("item")];
+    // el feed también trae listas: nos quedamos con la primera entrada que sea una película
+    const item = items.find(i => i.getElementsByTagName("letterboxd:filmTitle").length);
+    if(!item) throw new Error("sin películas");
+
+    const get = tag => item.getElementsByTagName(tag)[0]?.textContent || "";
+    const title   = get("letterboxd:filmTitle");
+    const year    = get("letterboxd:filmYear");
+    const rating  = parseFloat(get("letterboxd:memberRating"));
+    const rewatch = get("letterboxd:rewatch") === "Yes";
+    const poster  = (get("description").match(/<img src="([^"]+)"/) || [])[1] || "";
+
+    let stars = "";
+    if(!isNaN(rating)) stars = "★".repeat(Math.floor(rating)) + (rating % 1 ? "½" : "");
+
+    const detalle = [stars, rewatch ? "re-watch" : ""].filter(Boolean).join(" · ");
+
+    el.innerHTML =
+      `${poster ? `<img src="${escHTML(poster)}" alt="">` : ""}` +
+      `<span style="color:var(--gondola);font-size:0.88rem;">${escHTML(title)}${year ? ` (${escHTML(year)})` : ""}</span>` +
+      `${detalle ? `<br><span style="font-size:0.76rem;color:var(--text-faint);">${escHTML(detalle)}</span>` : ""}`;
+  } catch (err) {
+    console.error("Letterboxd:", err);
+    el.textContent = "sin señal";
+  }
+}
+
 /* ── CONTADOR ANIMADO ───────────────────────────────────────── */
 async function contador(){
   try {
@@ -1219,7 +1289,7 @@ const mensajes=[
 document.getElementById("mensaje").textContent=mensajes[Math.floor(Math.random()*mensajes.length)];
 
 /* ── INIT ───────────────────────────────────────────────────── */
-getLastTrack(); getAnime(); contador();
+getLastTrack(); getAnime(); getMovie(); contador();
 </script>
 </body>
 </html>
